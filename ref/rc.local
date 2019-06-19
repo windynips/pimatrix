@@ -1,0 +1,21 @@
+#!/bin/sh -e
+#file autocreated, do not edit
+#
+
+hsm=$(hotspot startmode 2>/dev/null)
+if [ "$hsm" = "yes" ]; then hotspot try >/tmp/hotspot.log 2>&1; fi
+
+# Print the IP address
+_IP=$(hostname -I) || true
+if [ "$_IP" ]; then
+  logger -s -t hotspot "My IP address is $_IP"
+  printf "IP %s\nRaspbian GNU/Linux\n" "$_IP" > /etc/issue
+else
+  printf "Raspbian GNU/Linux\n" > /etc/issue
+
+fi
+
+hotspot start
+java -jar /home/pi/windynips/webserver/pimatrixwebserver/payara-micro-prerelease-2016-11-24.jar --deploy /home/pi/windynips/webserver/pimatrixwebserver/rpi-rbg-matrix-webapp-0.0.1-SNAPSHOT.war
+
+exit 0
